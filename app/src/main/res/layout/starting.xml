@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To start the plane application, just hold the phone like you would a paper plane, and thrust it, the accelerometer will trigger the 'flight'. Be sure to not let go of the phone as it might break your phone!" />
+
+    
+    
+    <TextView 
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent" 
+    android:gravity="center_vertical|center_horizontal"
+    android:id="@+id/nosensor"
+/>
+      
+</LinearLayout>

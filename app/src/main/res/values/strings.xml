@@ -1,0 +1,5 @@
+<resources>
+    <string name="hello">Hello World, AndroidAppActivity!</string>
+    <string name="app_name">AndroidApp</string>
+    <string name="action_settings">Plane</string>
+</resources>
