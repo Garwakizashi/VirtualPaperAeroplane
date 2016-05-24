@@ -40,7 +40,8 @@ public class MainActivity extends Activity implements SensorEventListener {
     ProgressBar altitude, height;
     int origin = 50;
     int heightvalue;
-
+    ImageButton plane;
+    Bitmap bMap;
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,8 +51,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         x = (TextView)findViewById(R.id.x);
         y = (TextView)findViewById(R.id.y);
         z = (TextView)findViewById(R.id.z);
-        String yoyo = "";
-
         //--get the ids for the xml file--//
         // String sizenow = "";
         first = (TextView)findViewById(R.id.first);
@@ -63,8 +62,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         x2 = (TextView)findViewById(R.id.x2);
         /*y2 = (TextView)findViewById(R.id.y2);
         z2 = (TextView)findViewById(R.id.z2);*/
-
-
 
 
       /*  ImageView image = (ImageView) findViewById(R.id.drawable);
@@ -98,33 +95,35 @@ public class MainActivity extends Activity implements SensorEventListener {
         //---Linear Acceleration Sensor---//
         //---Rotation Vector Sensor---//
 
-
-
-
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         sensorManager2 = (SensorManager)getSystemService(SENSOR_SERVICE);
         List<Sensor> sensorList = sensorManager.getSensorList(android.hardware.Sensor.TYPE_ALL);
         //     accSensor = sensorManager3.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         orientationSensor = sensorManager2.getDefaultSensor(android.hardware.Sensor.TYPE_ORIENTATION);
 
-
-
-
         if(sensorList.size() > 0){
             sensorPresent = true;
             Sensor = sensorList.get(0);
             // 	orientationPresent = true;
-
-            yoyo = "Sensors are present";
-            first.setText(yoyo);
+            first.setText("Sensors are present");
             float test;
             test = sensorList.size();
-            first.setText("There is a total of " +Float.toString(test) +" sensors.");
+            first.setText("There is a total of " + Float.toString(test) + " sensors.");
+
+            plane = (ImageButton) findViewById(R.id.drawable);
+            plane.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    origin -= 10;
+                    if (origin <= 0) {
+                        startActivity(new Intent("com.example.gar.myapplication.STARTING"));
+                    }
+                }
+            });
+            bMap = BitmapFactory.decodeResource(getResources(), R.drawable.aeroplane); //getting the aeroplane picture up from drawable folder
         }
         else{
             sensorPresent = false;
-            yoyo = "Sensor NOT present";
-            first.setText(yoyo);
+            first.setText("Sensor NOT present");
         }
 
        /*
@@ -139,14 +138,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         recorder.stop();
         recorder.reset();   // You can reuse the object by going back to setAudioSource() step
-
-
         */
-
-
     }
-
-
 
     @Override
     protected void onResume() {
@@ -155,9 +148,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         if(sensorPresent){
             //sensorManager.registerListener(accelerometerListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
-
             sensorManager2.registerListener(this, orientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-
             //	sensorManager3.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_NORMAL);//
         }
     }
@@ -180,7 +171,9 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     public void onSensorChanged( SensorEvent arg0) {
-        // TODO Auto-generated method stub
+        if (origin <= 0){
+            startActivity(new Intent("com.example.gar.myapplication.STARTING"));
+        }
 
         x_value = arg0.values[0];
         float y_value = arg0.values[1];
@@ -189,13 +182,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         y.setText(String.valueOf(y_value));
         z.setText(String.valueOf(z_value));
 
-
         //--Instead of using canvas draw, I used bitmap image instead, using ImageView--//
         //--When I was working on the canvas draw style, I had alot of problems rotating, plus, I had problems adding text on as well--//
 
-
-        ImageButton plane = (ImageButton) findViewById(R.id.drawable);
-        Bitmap bMap = BitmapFactory.decodeResource(getResources(), R.drawable.aeroplane); //getting the aeroplane picture up from drawable folder
         Matrix m = new Matrix();
         degrees = (float) (-1*z_value); //setting degrees,
         m.postRotate(degrees); //matrix rotate, I have read out of set,pre,and post....post is the recommended method of rotation
@@ -204,85 +193,34 @@ public class MainActivity extends Activity implements SensorEventListener {
         Bitmap bMapRotate = Bitmap.createBitmap(bMap, 0, 0, bMap.getWidth(), bMap.getHeight(), m, true);
         //Set up tocreate the picture at certain angle called from postrotate......this will make it look like its rotating
 
-
-
-
-
         plane.setImageBitmap(bMapRotate);
 
-
-
-
-
-
-        int number = (((int)y_value*-1)+47); //making sure hte number set will rise and decrease due to orientation
+        int number = (((int) y_value * -1) + 47); //making sure hte number set will rise and decrease due to orientation
 
         //progress seems to only like int and not float, thus changing the y_value to integer.
         altitude.setProgress(number);
         //  Button imagebutton =(Button)findViewById(R.id.drawable);
 
-
-
-
-
-
         height.setProgress(origin);
 
-        if(number > 60){
-
-            origin+=5;
-
-
-
-        }
-        else if(number < 40){
-            origin-=5;
+        if (number > 60) {
+            origin += 5;
+        } else if (number < 40) {
+            origin -= 5;
         }
 
-        plane.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-
-                origin -=10;
-                // TODO Auto-generated method stub
-
-            }
-        });
-
-        if (origin == 0){
-            Intent openStarting = new Intent("com.gars.plane.STARTING");
-            startActivity(openStarting);
-
-        }
-        x2.setText("Turning at "+(String.valueOf(degrees))+ " degrees");
-
-
-
-
-
+        x2.setText("Turning at " + String.valueOf(degrees) + " degrees");
 
         //setting some limits, if angle exceeds 70 degrees, then the plane will 'crash
-        if(degrees>70){
-            Intent openStarting = new Intent("com.example.gar.myapplication.STARTING");
-            startActivity(openStarting);
+        if (degrees > 70) {
+            startActivity(new Intent("com.example.gar.myapplication.STARTING"));
+        } else if (degrees < -70) {
+            startActivity(new Intent("com.example.gar.myapplication.STARTING"));
         }
-        else if(degrees<-70){
-            Intent openStarting = new Intent("com.example.gar.myapplication.STARTING");
-            startActivity(openStarting);
-
-        }
-
-
-
 
 	         /*-------------Now I need to find  a few to view microphone activity, it seems the solution is not as simple as I thought------*/
 	        /*-----------But first, onclick listener can be implemented, however I am still thinking of how to show the height of the plane properly---*/
 	        /*----the Altitude using orientation just shows how much the plane is rising or descending in space (theoretically)-----*/
-
-
-
-
-
 
         //--changing floats to string, and then to be displayed for the id's of x y z --//
         //--using the values from the accelerometer to manipulate the size of the text.--//
