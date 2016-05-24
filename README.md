@@ -6,4 +6,4 @@ The original was developed on Eclipse. This was made in Android Studio, with a s
 
 Run the application on an android device.
 
-There some bugs still compared to the original submitted working version.
+There are some bugs compared to the original submitted working version.
